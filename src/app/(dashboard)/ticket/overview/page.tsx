@@ -49,32 +49,34 @@ export default function Home() {
   const [ticketData, setTicketData] = useState<TicketData[]>([])
   const [loading, setLoading] = useState<boolean>(true)
 
-  useEffect(() => {
-    // ฟังก์ชันสำหรับดึงข้อมูลจาก API
-    const fetchTicketData = async () => {
-      try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tickets/all`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ putTicket: 'All' }) // ส่งค่า putTicket = 'All'
-        })
+  // ฟังก์ชันสำหรับดึงข้อมูลจาก API
+  const fetchTicketData = async () => {
+    try {
+      setLoading(true)
 
-        const data = await response.json()
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tickets/all`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ putTicket: 'All' }) // ส่งค่า putTicket = 'All'
+      })
 
-        if (response.ok) {
-          setTicketData(data)
-        } else {
-          console.error('Error fetching ticket data:', data)
-        }
-      } catch (error) {
-        console.error('Error fetching tickets:', error)
-      } finally {
-        setLoading(false)
+      const data = await response.json()
+
+      if (response.ok) {
+        setTicketData(data)
+      } else {
+        console.error('Error fetching ticket data:', data)
       }
+    } catch (error) {
+      console.error('Error fetching tickets:', error)
+    } finally {
+      setLoading(false)
     }
+  }
 
+  useEffect(() => {
     fetchTicketData()
   }, [])
 
@@ -208,7 +210,12 @@ export default function Home() {
           />
         </Box>
       </Paper>
-      <TicketModal isOpen={isModalOpen} closeModal={handleCloseModal} onSubmit={handleModalSubmit} />
+      <TicketModal
+        isOpen={isModalOpen}
+        closeModal={handleCloseModal}
+        onSubmit={handleModalSubmit}
+        fetchTicketData={fetchTicketData}
+      />
     </React.Fragment>
   )
 }

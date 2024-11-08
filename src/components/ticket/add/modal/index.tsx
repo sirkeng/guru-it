@@ -7,6 +7,7 @@ type ModalProps = {
   isOpen: boolean
   closeModal: () => void
   onSubmit: (data: { ticketTitle: string; ticketDescription: string; ticketFile: File | null }) => void
+  fetchTicketData: () => Promise<void>
 }
 
 type CustomerOption = {
@@ -14,7 +15,7 @@ type CustomerOption = {
   value: number
 }
 
-const TicketModal: React.FC<ModalProps> = ({ isOpen, closeModal, onSubmit }) => {
+const TicketModal: React.FC<ModalProps> = ({ isOpen, closeModal, onSubmit, fetchTicketData }) => {
   const [ticketCustomer, setTicketCustomer] = useState<number | null>()
   const [ticketTitle, setTicketTitle] = useState<string>('')
   const [ticketDescription, setTicketDescription] = useState<string>('')
@@ -87,6 +88,7 @@ const TicketModal: React.FC<ModalProps> = ({ isOpen, closeModal, onSubmit }) => 
           showConfirmButton: false
         }).then(result => {
           if (result.dismiss === Swal.DismissReason.timer) {
+            fetchTicketData() // Refresh ticket data after creating a new ticket
             closeModal() // Close the modal after the Swal2 popup closes
           }
         })
